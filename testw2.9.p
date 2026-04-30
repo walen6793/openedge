@@ -1,0 +1,55 @@
+define buffer bS_ArtKunde for S_ArtKunde.
+define variable iCount as integer no-undo.
+define variable cLast as character no-undo.
+define variable lHas2 as logical no-undo.
+define variable cList as character no-undo.
+define variable cResult as character no-undo.
+
+
+
+FOR EACH bS_ArtKunde
+  where bS_ArtKunde.Firma   = {firma/sartkund.fir '100'}
+  no-lock by bS_ArtKunde.Kunde:
+  
+    /* ????????????????????????????????????????? */
+    if cLast <> "" and cLast <> string(bS_ArtKunde.Kunde) then
+        do:
+            if iCount <= 5 then
+              do:
+                /* ?????????????? 5 */
+                IF cLast <> "" AND iCount <= 5 AND lHas2 = true then
+                  do:
+                    cResult = cResult + (IF cResult = "" then "" else "~n") + cLast + "," + cList. 
+              
+                  end.
+                  IF cLast <> "" AND iCount <= 5 AND lHas2 = false then
+                    cResult = cResult + (IF cList = "" then "" else "~n") + cLast + "," + cList.
+                
+                  end.
+                    
+           /* reset ??????????????? */     
+            ASSIGN
+              iCount = 0
+              cList =  ""
+              lHas2 = false
+              
+      .    /* ?????????? IF */
+        end.
+        
+    iCount = iCount + 1.
+    cList = (IF cList = "" then "" else cList + ",") + bS_ArtKunde.Artikel.
+      if bS_ArtKunde.Artikel BEGINS '2' then
+        lHas2 = true.
+    
+      cLast = string(bS_ArtKunde.Kunde).
+    
+    
+    /* ????? */
+    end. 
+   
+   
+    
+    
+      
+   message
+     cResult.

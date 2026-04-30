@@ -1,0 +1,25 @@
+define buffer bS_ArtKunde for S_ArtKunde.
+define buffer bS_ArtKunde2 for S_ArtKunde.
+
+
+
+
+for each bS_ArtKunde 
+  where bS_ArtKunde.Firma = {firma/sartikel.fir '100'}
+  no-lock.
+  display
+    bS_ArtKunde.artikel.
+
+find first bS_ArtKunde2 
+  where bS_ArtKunde.Firma = {firma/sartikel.fir '100'}
+   no-lock.
+   
+end.
+
+if available bS_ArtKunde and available bS_ArtKunde2 then 
+  display
+    "Artikel = " 
+    
+    
+    
+
