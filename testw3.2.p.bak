@@ -1,0 +1,37 @@
+
+
+define temp-table Result
+  field tt-Artikel   like  V_BelegPos.Artikel
+  field tt-BelegArt  like  V_BelegPos.BelegArt
+  field tt-PositionsNr  like  V_BelegPos.PositionsNr
+  field tt-Belegnummer   like  V_BelegPos.BelegNummer
+
+
+.
+
+
+for each V_BelegPos
+  where V_BelegPos.Firma        = {firma/vbelegko.fir '100'}
+    and V_BelegPos.BelegArt     = 'R'
+    and V_BelegPos.offen        = YES 
+   
+  no-lock:
+  create Result.
+  assign
+    Result.tt-Artikel        =  V_BelegPos.Artikel
+
+    Result.tt-BelegArt       = V_BelegPos.BelegArt
+    Result.tt-PositionsNr    = V_BelegPos.PositionsNr 
+    Result.tt-Belegnummer    =  V_BelegPos.BelegNummer.
+  
+end.
+
+for each Result
+  no-lock:
+  display
+    Result.tt-Artikel      
+    Result.tt-BelegArt     
+    Result.tt-PositionsNr   
+    Result.tt-Belegnummer   .
+    
+end.

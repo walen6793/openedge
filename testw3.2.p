@@ -1,0 +1,16 @@
+for each V_BelegPos
+  where V_BelegPos.Firma        = {firma/vbelegko.fir '100'}
+    and V_BelegPos.BelegArt     = 'R'
+    and V_BelegPos.Offen     =  yes
+     no-lock:
+     
+     display
+       V_BelegPos.BelegArt
+       V_BelegPos.PositionsNr
+       V_BelegPos.Artikel
+       V_Belegpos.Einstandspreis 
+    .
+end.
+  
+  
+  

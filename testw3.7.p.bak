@@ -1,0 +1,72 @@
+define buffer bV_BelegPos for  V_BelegPos.
+define variable lIsL as logical no-undo.
+define variable lIsR as logical no-undo.
+
+
+
+for each V_BelegPos
+  where V_BelegPos.Firma        = {firma/vbelegko.fir '100'}
+    and V_BelegPos.BelegArt     = 'U'
+    no-lock:
+
+    find first bV_BelegPos
+      where bV_BelegPos.Firma            = {firma/vbelegko.fir '100'}
+        and bV_BelegPos.Herk_BelegArt    = V_BelegPos.BelegArt
+        and bV_BelegPos.Herk_ReferenzNr  = V_BelegPos.ReferenzNr
+        and bV_BelegPos.Herk_PositionsNr = V_BelegPos.PositionsNr
+        no-lock no-error.
+     if available bV_Belegpos then
+     do:
+       if bV_BelegPos.BelegArt = 'L' then
+       do:
+         lIsL = true.
+       end. /* ? */
+       else if bV_BelegPos.BelegArt = 'R' then
+       do:
+         lIsR = true.
+       end. /* ? */
+       find V_BelegKopf
+         where V_BelegKopf.Firma       = {firma/vbelegko.fir '100'}
+           and V_BelegKopf.BelegArt    =  bV_BelegPos.BelegArt
+           and V_BelegKopf.ReferenzNr  =  bV_BelegPos.ReferenzNr
+         no-lock no-error.
+       find S_Kunde
+         where S_Kunde.Firma  = {firma/s_kunde.fir '100'}
+           and S_Kunde.Kunde  = V_BelegKopf.Kunde
+         no-lock no-error.
+       find S_Adresse
+         where S_Adresse.Firma     = {firma/s_adres.fir '100'}
+           and S_Adresse.AdressNr  = S_Kunde.AdressNr
+         no-lock no-error.
+       find S_ArtikelSpr
+         where S_ArtikelSpr.Firma    = {firma/sartikel.fir '100'}
+           and S_ArtikelSpr.Artikel  = bV_BelegPos.Artikel
+           and S_ArtikelSpr.Sprache  = 'D'
+         no-lock no-error.
+         
+         
+       DISPLAY
+         string(V_BelegKopf.Kunde) LABEL "Kunde"
+         string(S_Adresse.Name1)  LABEL "Name1"
+         string(V_BelegPos.BelegNummer) LABEL "U"
+         (if lIsL = true then  string(bV_BelegPos.BelegNummer)
+          else if lIsR = true then  "" else "") LABEL 'L'
+         (if lIsL = true then yes else no) LABEL 'Adoption(L)'
+         (if lIsL = true then "" else string(bV_BelegPos.BelegNummer)) LABEL "BelegNr(R)"
+          (if lIsL = true then no else if lIsR = true then yes else no) LABEL "Adoption(R)"
+          string(V_BelegPos.PositionsNr) LABEL "Position"
+          string(bV_BelegPos.Artikel) LABEL "Artikel"
+          string(S_ArtikelSpr.Bezeichnung[1]) LABEL "Bezei" 
+          with width 200
+          .
+
+
+
+       
+       
+     end. /* ? */
+   end.
+     
+     
+      
+

@@ -1,0 +1,38 @@
+
+define temp-table Result
+  field tt-BelegArt AS CHARACTER 
+  field tt-BelegNumber AS CHARACTER 
+  field tt-Refer-enzNr AS CHARACTER
+. 
+
+define variable a as integer no-undo init 1.
+define variable u as integer no-undo init 2.
+define variable l as integer no-undo init 3.
+define variable r as integer no-undo init 4.
+define variable g as integer no-undo init 5.
+
+
+for each V_BelegKopf
+  where V_BelegKopf.Firma      = {firma/vbelegko.fir pACConnectionSvc:prpcCompany}
+
+  no-lock
+  on error undo, throw:
+  create Result.
+  assign
+    Result.tt-BelegNumber = string(V_BelegKopf.BelegNummer) 
+    Result.tt-BelegArt = string(V_BelegKopf.BelegArt)
+    Result.tt-Refer-enzNr = string(V_BelegKopf.ReferenzNr).
+  
+
+end.
+
+
+for each Result where LOOKUP(Result.tt-BelegArt,"a,u,l,r,g") > 0
+  no-lock by LOOKUP(Result.tt-BelegArt,"a,u,l,r,g"):
+  display
+    Result.tt-BelegNumber LABEL "BelegNumber"
+    Result.tt-BelegArt LABEL "BelegArt"
+    Result.tt-Refer-enzNr LABEL "ReferenzNr"
+    .
+    end.
+     
